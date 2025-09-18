@@ -25,15 +25,10 @@ import sqlite3
 # Third-party imports
 import numpy as np
 import pandas as pd
-import bcrypt
-import faiss
-import ollama
-import streamlit as st
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 from PIL import Image
-from groq import Groq
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langgraph.graph import StateGraph, END
 from typing import TypedDict
@@ -42,9 +37,46 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Optional imports (with fallbacks)
 try:
-    from googletrans import Translator
+    import bcrypt
+    BCRYPT_AVAILABLE = True
 except ImportError:
-    Translator = None
+    BCRYPT_AVAILABLE = False
+    print("Warning: bcrypt not available. Authentication will not work properly.")
+
+try:
+    import faiss
+    FAISS_AVAILABLE = True
+except ImportError:
+    FAISS_AVAILABLE = False
+    print("Warning: faiss not available. Vector search will not work.")
+
+try:
+    import ollama
+    OLLAMA_AVAILABLE = True
+except ImportError:
+    OLLAMA_AVAILABLE = False
+    print("Warning: ollama not available. Local LLM integration will not work.")
+
+try:
+    import streamlit as st
+    STREAMLIT_AVAILABLE = True
+except ImportError:
+    STREAMLIT_AVAILABLE = False
+    print("Warning: streamlit not available. UI will not work.")
+
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+    print("Warning: groq not available. Groq API integration will not work.")
+
+try:
+    from googletrans import Translator
+    GOOGLETRANS_AVAILABLE = True
+except ImportError:
+    GOOGLETRANS_AVAILABLE = False
+    print("Warning: googletrans not available. Translation will not work.")
 
 try:
     import psutil
@@ -55,34 +87,45 @@ except ImportError:
 
 try:
     from unstructured.partition.pdf import partition_pdf
+    UNSTRUCTURED_AVAILABLE = True
 except ImportError:
-    partition_pdf = None
+    UNSTRUCTURED_AVAILABLE = False
+    print("Warning: unstructured not available. Advanced PDF processing will not work.")
 
 try:
     import pdf2image
+    PDF2IMAGE_AVAILABLE = True
 except ImportError:
-    pdf2image = None
+    PDF2IMAGE_AVAILABLE = False
+    print("Warning: pdf2image not available. PDF to image conversion will not work.")
 
 try:
     import pytesseract
+    PYTESSERACT_AVAILABLE = True
 except ImportError:
-    pytesseract = None
+    PYTESSERACT_AVAILABLE = False
+    print("Warning: pytesseract not available. OCR will not work.")
 
 try:
     import docx2txt
+    DOCX2TXT_AVAILABLE = True
 except ImportError:
-    docx2txt = None
+    DOCX2TXT_AVAILABLE = False
+    print("Warning: docx2txt not available. DOCX processing will not work.")
 
 try:
     import markdown
+    MARKDOWN_AVAILABLE = True
 except ImportError:
-    markdown = None
+    MARKDOWN_AVAILABLE = False
+    print("Warning: markdown not available. Markdown processing will not work.")
 
 try:
     from pypdf import PdfReader
+    PYPDF_AVAILABLE = True
 except ImportError:
-    PdfReader = None
-
+    PYPDF_AVAILABLE = False
+    print("Warning: pypdf not available. PDF processing will be limited.")
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -3456,3 +3499,4 @@ if __name__ == "__main__":
     main()
 
         
+
