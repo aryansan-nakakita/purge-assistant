@@ -21,7 +21,6 @@ from contextlib import contextmanager
 from dataclasses import dataclass, field
 from functools import wraps
 import sqlite3
-import psutil
 
 # Third-party imports
 import numpy as np
@@ -40,9 +39,20 @@ from langgraph.graph import StateGraph, END
 from typing import TypedDict
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from googletrans import Translator
 
 # Optional imports (with fallbacks)
+try:
+    from googletrans import Translator
+except ImportError:
+    Translator = None
+
+try:
+    import psutil
+    PSUTIL_AVAILABLE = True
+except ImportError:
+    PSUTIL_AVAILABLE = False
+    print("Warning: psutil not available. Memory monitoring will be disabled.")
+
 try:
     from unstructured.partition.pdf import partition_pdf
 except ImportError:
@@ -3444,4 +3454,5 @@ for key in st.session_state:
 
 if __name__ == "__main__":
     main()
+
         
